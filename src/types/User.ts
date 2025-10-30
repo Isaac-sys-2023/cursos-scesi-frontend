@@ -2,7 +2,7 @@ export interface User {
   token: string;
   nombre: string;
   email: string;
-  role: string;
+  role: "admin" | "tutor" | "estudiante";
 }
 
 export interface UserContextProps {
