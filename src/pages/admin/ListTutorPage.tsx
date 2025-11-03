@@ -3,20 +3,26 @@ import { useUser } from "../../context/useUser";
 import { listTutors } from "../../services/userService";
 import { useNavigate } from "react-router-dom";
 import type { TutorUser } from "../../types/User";
+import { CircularProgress } from "@mui/material";
 
 const ListTutorPage = () => {
   const [users, setUsers] = useState<TutorUser[]>([]);
   const { user } = useUser();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     if (!user) return;
     const getUsers = async () => {
+      setLoading(true);
       try {
         const data = await listTutors(user.token);
         setUsers(data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
     getUsers();
@@ -25,6 +31,10 @@ const ListTutorPage = () => {
   const handleEdit = (tutorItem: TutorUser) => {
     navigate(`/edit-tutor/${tutorItem._id}`, { state: { tutor: tutorItem } });
   };
+
+  if(loading){
+    return(<><CircularProgress enableTrackSlot size="30px" /> <p>Cargando</p></>);
+  }
 
   return (
     <div>
