@@ -8,7 +8,7 @@ import LoginPage from './pages/LoginPage'
 import { PrivateRoute } from './routes/PrivateRoutes'
 import RegisterAdminPage from './pages/admin/RegisterAdminPage'
 import ListTutorPage from './pages/admin/ListTutorPage'
-import EditUserDataPage from './pages/admin/EditUserDataPage'
+import EditTutorDataPage from './pages/admin/EditTutorDataPage'
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
         <Route path="/admin" element={<PrivateRoute roles={["admin"]}><DashboardAdmin /></PrivateRoute>} />
         <Route path="/register" element={<PrivateRoute roles={["admin"]}><RegisterAdminPage /></PrivateRoute>} />
         <Route path="/tutores-lista" element={<PrivateRoute roles={["admin"]}><ListTutorPage /></PrivateRoute>} />
-        <Route path="/edit-tutor" element={<PrivateRoute roles={["admin"]}><EditUserDataPage /></PrivateRoute>} />
+        <Route path="/edit-tutor/:id" element={<PrivateRoute roles={["admin"]}><EditTutorDataPage /></PrivateRoute>} />
 
         <Route path="/estudiantes" element={<PrivateRoute roles={["admin","estudiante"]}><DashboardEstudiantes /></PrivateRoute>} />
         

@@ -101,6 +101,7 @@ const RegisterAdminPage = () => {
           placeholder="Nombre"
           value={form.nombre}
           onChange={handleChange}
+          required
         />
         <input
           type="text"
@@ -108,6 +109,7 @@ const RegisterAdminPage = () => {
           placeholder="Apellidos"
           value={form.apellidos}
           onChange={handleChange}
+          required
         />
         <input
           type="email"
@@ -115,6 +117,7 @@ const RegisterAdminPage = () => {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
+          required
         />
         <input
           type="password"
@@ -122,6 +125,7 @@ const RegisterAdminPage = () => {
           placeholder="Contraseña"
           value={form.password}
           onChange={handleChange}
+          required
         />
         <input
           type="date"
@@ -134,6 +138,7 @@ const RegisterAdminPage = () => {
               fechaNacimiento: new Date(e.target.value),
             }))
           }
+          required
         />
         <textarea
           name="descripcion"
@@ -184,6 +189,7 @@ const RegisterAdminPage = () => {
                 placeholder="URL de la red social"
                 value={redItem.url}
                 onChange={(e) => handleRedUrlChange(index, e.target.value)}
+                required
               />
 
               <button type="button" onClick={() => handleRedDelete(index)}>

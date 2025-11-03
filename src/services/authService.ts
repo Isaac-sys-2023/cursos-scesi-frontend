@@ -2,8 +2,10 @@ import axios from "axios";
 import { type User } from "../types/User";
 import type { RegisterFormData } from "../types/RegisterFormData";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const loginFetch = async (email: string, password: string, loginUser: (userData: User) => void) => {
-    const response = await fetch(`http://localhost:4000/api/auth/login`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -21,7 +23,7 @@ export const loginFetch = async (email: string, password: string, loginUser: (us
 }
 
 export const loginAxios = async (email: string, password: string, loginUser: (userData: User) => void) => {
-    const response = await axios.post(`http://localhost:4000/api/auth/login`, { email, password });
+    const response = await axios.post(`${API_URL}/auth/login`, { email, password });
 
     const data = response.data;
     loginUser({
@@ -46,7 +48,7 @@ export const registerTutor = async (form: RegisterFormData, token: string) => {
     if (form.imagen) formData.append("imagen", form.imagen);
     if (form.descripcion) formData.append("descripcion", form.descripcion);
 
-    const response = await fetch(`http://localhost:4000/api/auth/register`, {
+    const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: { "Authorization": `Bearer ${token}` },
         body: formData,

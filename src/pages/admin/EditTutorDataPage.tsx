@@ -1,33 +1,37 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../context/useUser";
 import { useEffect, useState, type ChangeEvent } from "react";
 import type { Red } from "../../types/Red";
 import { getRedesFetch } from "../../services/redesService";
 import type { EditFormData, RedTutor } from "../../types/RegisterFormData";
-import type { UserItem } from "../../types/User";
+import type { TutorUser } from "../../types/User";
 import { updateTutor } from "../../services/userService";
+import { CircularProgress } from "@mui/material";
 
-const EditUserDataPage = () => {
+const EditTutorDataPage = () => {
   const location = useLocation();
-  const myUser: UserItem = location.state.myUser;
+  const navigate = useNavigate();
+  const tutor: TutorUser = location.state.tutor;
 
   const redesTutor: RedTutor[] =
-    myUser.redes?.map((redUser) => ({
+    tutor.redes?.map((redUser) => ({
       red: redUser.red._id, // aquí tomas solo el _id del objeto Red
       url: redUser.url,
     })) || [];
 
   const myFechaNacimiento =
-    myUser.fechaNacimiento instanceof Date
-      ? myUser.fechaNacimiento.toISOString()
-      : myUser.fechaNacimiento;
+    tutor.fechaNacimiento instanceof Date
+      ? tutor.fechaNacimiento.toISOString()
+      : tutor.fechaNacimiento;
 
   const [form, setForm] = useState<EditFormData>({
-    nombre: myUser.nombre || "",
-    apellidos: myUser.apellidos || "",
-    email: myUser.email || "",
+    nombre: tutor.nombre || "",
+    apellidos: tutor.apellidos || "",
+    email: tutor.email || "",
     redes: redesTutor,
   });
+
+  const [submmiting, setSubmmiting] = useState<boolean>(false);
 
   const loadImageAsFile = async (url: string) => {
     if (url) {
@@ -42,7 +46,7 @@ const EditUserDataPage = () => {
   };
 
   useEffect(() => {
-    const myImage = myUser.imagen || null;
+    const myImage = tutor.imagen || null;
 
     const validateImage = async (myImage: string) => {
       await loadImageAsFile(myImage);
@@ -50,7 +54,7 @@ const EditUserDataPage = () => {
 
     if (myImage != null) validateImage(myImage);
 
-    const myDescripcion = myUser.descripcion || "";
+    const myDescripcion = tutor.descripcion || "";
     setForm({ ...form, descripcion: myDescripcion });
   }, []);
 
@@ -107,6 +111,8 @@ const EditUserDataPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmmiting(true);
+
     setMessageErrorBack("");
     setMessageSuccess("");
 
@@ -116,26 +122,28 @@ const EditUserDataPage = () => {
       if (!user) return;
       const finalForm: EditFormData = form;
 
-      if (form.apellidos === myUser.apellidos) {
+      if (form.apellidos === tutor.apellidos) {
         delete form.apellidos;
       }
-      if (form.nombre === myUser.nombre) {
+      if (form.nombre === tutor.nombre) {
         delete form.nombre;
       }
-      if (form.email === myUser.email) {
+      if (form.email === tutor.email) {
         delete form.email;
       }
-      if (form.descripcion === myUser.descripcion) {
+      if (form.descripcion === tutor.descripcion) {
         delete form.descripcion;
       }
       if (form.imagen && form.imagen.name === "imagen_original.jpg") {
         delete form.imagen;
       }
 
-      const data = await updateTutor(user.token, finalForm, myUser._id);
+      const data = await updateTutor(user.token, finalForm, tutor._id);
       console.log("Registro exitoso:", data);
       setMessageSuccess(data.msg);
       alert(`${data.msg}`);
+
+      navigate("/tutores-lista");
     } catch (error: any) {
       console.error("Error al editar tutor:", error);
       if (error.status) {
@@ -143,6 +151,8 @@ const EditUserDataPage = () => {
       } else {
         setMessageErrorBack(`Error al conectar con el servidor`);
       }
+    } finally {
+      setSubmmiting(false);
     }
   };
 
@@ -156,6 +166,7 @@ const EditUserDataPage = () => {
           placeholder="Nombre"
           value={form.nombre}
           onChange={handleChange}
+          required
         />
         <input
           type="text"
@@ -163,6 +174,7 @@ const EditUserDataPage = () => {
           placeholder="Apellidos"
           value={form.apellidos}
           onChange={handleChange}
+          required
         />
         <input
           type="email"
@@ -170,6 +182,7 @@ const EditUserDataPage = () => {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
+          required
         />
         <textarea
           name="descripcion"
@@ -205,7 +218,7 @@ const EditUserDataPage = () => {
               <button
                 type="button"
                 onClick={async () => {
-                  if (myUser.imagen) await loadImageAsFile(myUser.imagen);
+                  if (tutor.imagen) await loadImageAsFile(tutor.imagen);
                 }}
               >
                 Resetear
@@ -214,9 +227,9 @@ const EditUserDataPage = () => {
           ) : (
             <p>Sin imagen</p>
           )}{" "}
-          {myUser.imagen ? (
+          {tutor.imagen ? (
             <img
-              src={myUser.imagen}
+              src={tutor.imagen}
               alt="Imagen actual"
               width={100}
               height={100}
@@ -255,6 +268,7 @@ const EditUserDataPage = () => {
                 placeholder="URL de la red social"
                 value={redItem.url}
                 onChange={(e) => handleRedUrlChange(index, e.target.value)}
+                required
               />
 
               <button type="button" onClick={() => handleRedDelete(index)}>
@@ -268,7 +282,7 @@ const EditUserDataPage = () => {
           Agregar Red
         </button>
 
-        <button type="submit">Actualizar Tutor</button>
+        <button type="submit">{submmiting && <CircularProgress enableTrackSlot size="30px" />} Actualizar Tutor</button>
       </form>
 
       {messageErrorBack && <p>{messageErrorBack}</p>}
@@ -277,4 +291,4 @@ const EditUserDataPage = () => {
   );
 };
 
-export default EditUserDataPage;
+export default EditTutorDataPage;
