@@ -1,6 +1,6 @@
 export interface RedTutor {
-  red: string;
-  url: string;
+  red: string; //id de la red
+  url: string; //url que agarra del input
 }
 
 export interface RegisterFormData {
@@ -13,4 +13,13 @@ export interface RegisterFormData {
   imagen?: File;
   descripcion?: string;
   redes: RedTutor[];
+}
+
+export interface EditFormData {
+  nombre?: string;
+  apellidos?: string;
+  email?: string;
+  imagen?: File;
+  descripcion?: string;
+  redes?: RedTutor[];
 }
